@@ -1,0 +1,113 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(areaplot)
+library(treemapify)
+```
+```{r}
+cols <- hcl.colors(18, palette = "ag_Sunset", alpha = 0.8)
+
+cols
+```
+
+
+```{r}
+mpg %>% group_by(year)
+```
+
+
+```{r}
+barChart <- data.frame(cyl = 0, averageCty = 0)
+
+barChart <- mpg %>% 
+  group_by(cyl) %>%
+  mutate(cyl = cyl, averageCty = mean(cty))
+
+barChart <- arrange(distinct(barChart, cyl=as.character(cyl), averageCty), cyl)
+
+barChart
+```
+
+```{r}
+p <- ggplot(barChart) +
+  geom_col(aes(x=cyl, y=averageCty, fill=cyl)) +
+  labs(title = "Car efficiencies in cities with cylinder count", x = "Cylinders", y = "Average City MPG", fill = "Cylinders")
+p
+```
+
+```{r}
+profitData <- data.frame(year = c(2010,2011,2012,2013,2014,2015,2016,2017,2018), 
+                        A = c(147, 160, 156, 180, 183, 176, 200, 152, 183),
+                        B = c(90, 102, 84, 76, 70, 72, 40, 45, 38),
+                        C = c(30, 23, 20, 22, 26, 34, 45, 62, 84))
+
+profitBreakdown
+```
+
+```{r}
+p <- ggplot(profitData, aes(x=year)) +
+  geom_line(aes(y=A, color="A"), ) +
+  geom_point(aes(y=A, color="A"), ) +
+  geom_line(aes(y=B, color="B")) +
+  geom_point(aes(y=B, color="B")) +
+  geom_line(aes(y=C, color="C")) +
+  geom_point(aes(y=C, color="C")) +
+  labs(title = "Yearly Profits", x = "Year", y = "Proft", color = "Division")
+  
+
+p
+```
+```{r}
+x = profitData$year
+
+y=profitData[,c(2,3,4)]
+
+cols <- hcl.colors(3, palette = "ag_Sunset", alpha = 0.8)
+
+areaplot(x, y, col=cols, border = "white", xlab = "Year", ylab = "Total Profit", legend = TRUE)
+```
+```{r}
+x = profitData$year
+
+y=profitData[,c(2,3,4)]
+
+cols <- hcl.colors(3, palette = "ag_Sunset", alpha = 0.8)
+
+areaplot(x, y, prop=TRUE, col=cols, border = "white", xlab = "Year", ylab = "Relative Profit", legend = TRUE)
+```
+
+
+profitBreakdown = data.frame(AA = c(87, 28, 32, 0),
+                        BA = c(32, 28, 8, 22),
+                        CA = c(12, 9, 9, 0))
+
+```{r}
+group <- paste("Group", 1:9)
+subgroup <- c("A", "C", "B", "A", "A",
+              "C", "C", "B", "B")
+value <- c(87, 12, 32, 28, 32,
+           9, 9, 23, 29)
+
+profitBreakdown <- data.frame(group, subgroup, value) 
+
+ggplot(profitBreakdown, aes(area = value, fill = subgroup,
+               label = paste("Division", subgroup, value, sep = "\n"))) +
+  geom_treemap() +
+  geom_treemap_text(colour = "white",
+                    place = "centre",
+                    size = 15) +
+  theme(legend.position = "none")
+```
+
+
+
+
+
+
+
+
